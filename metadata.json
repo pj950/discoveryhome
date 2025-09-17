@@ -1,0 +1,7 @@
+{
+  "name": "Discovery Homes",
+  "description": "A visually stunning showcase of unique vacation stays. Browse curated homes and, in the admin panel, upload new properties and generate business insights using AI.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
