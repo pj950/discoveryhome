@@ -1,0 +1,45 @@
+/* Custom styles for the application */
+.brand-green {
+  --tw-bg-opacity: 1;
+  background-color: rgb(72 187 120 / var(--tw-bg-opacity));
+}
+
+.text-brand-green {
+  --tw-text-opacity: 1;
+  color: rgb(72 187 120 / var(--tw-text-opacity));
+}
+
+.ring-brand-green {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(72 187 120 / var(--tw-ring-opacity));
+}
+
+.focus\:ring-brand-green:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(72 187 120 / var(--tw-ring-opacity));
+}
+
+.focus\:border-brand-green:focus {
+  --tw-border-opacity: 1;
+  border-color: rgb(72 187 120 / var(--tw-border-opacity));
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
