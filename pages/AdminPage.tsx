@@ -5,40 +5,11 @@ import { ALL_AMENITIES } from '../constants';
 
 // --- Helper & Icon Components ---
 
-const LeafIcon: React.FC<{className?: string}> = ({className}) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 14.24V19.95C16.16 19.44 18.5 16.94 18.95 13.8C16.95 14.18 14.65 14.47 13 14.24ZM11 4.05C11.96 5.67 12.31 7.89 11.75 9.8C10.74 9.4 8.5 8.92 7.05 7.05C8.06 5.56 9.45 4.5 11 4.05ZM6.05 8.05C7.92 9.5 10.15 10.22 11.25 10.76C10.69 12.67 10.96 15.05 12 16.43C9.95 15.86 7.5 14.18 5.05 12C5.56 10.55 5.56 9.06 6.05 8.05ZM12 11.53C14.28 12.03 16.57 12.24 18.29 11.95C17.93 8.35 15.65 5.35 12.43 4.25C13.82 6.05 13.97 8.95 12 11.53Z" fill="currentColor"/>
-  </svg>
-);
-
-const DashboardIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>;
-const PropertyIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2h-5L9 4H4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1z" clipRule="evenodd" /></svg>;
-const MessageIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" /><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" /></svg>;
-const ReportIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm2 4a1 1 0 100 2h4a1 1 0 100-2H8zm0 3a1 1 0 000 2h4a1 1 0 100-2H8zm0 3a1 1 0 100 2h2a1 1 0 100-2H8z" clipRule="evenodd" /></svg>;
-const SettingsIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01-.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" /></svg>;
 const DeleteIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" /></svg>;
 const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" /></svg>;
+const CloseIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>;
 
 // --- Main Admin Page Components ---
-
-const Sidebar = () => (
-  <aside className="w-64 bg-admin-dark text-gray-200 flex flex-col">
-    <div className="p-6 flex items-center space-x-3 border-b border-gray-700">
-      <LeafIcon className="text-white" />
-      <div>
-        <h1 className="text-lg font-bold text-white">Discovery Homes</h1>
-        <p className="text-xs text-gray-400">Curated Comforts for Your Journey</p>
-      </div>
-    </div>
-    <nav className="flex-1 px-4 py-6 space-y-2">
-      <a href="#" className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-md"><DashboardIcon /> Dashboard</a>
-      <a href="#" className="flex items-center px-4 py-2 bg-admin-green-light text-admin-green rounded-md"><PropertyIcon /> Properties</a>
-      <a href="#" className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-md"><MessageIcon /> Messages</a>
-      <a href="#" className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-md"><ReportIcon /> Reports</a>
-      <a href="#" className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-md"><SettingsIcon /> Settings</a>
-    </nav>
-  </aside>
-);
 
 const EmptyProperty: Omit<Property, 'id'> = {
   name: '',
@@ -65,6 +36,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
   const [editingProperty, setEditingProperty] = useState<Property | Omit<Property, 'id' | 'date' | 'status'> | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (selectedProperty) {
@@ -138,24 +110,64 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
       reader.readAsDataURL(file);
     }
   };
+
+  const handleGalleryUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && editingProperty) {
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64String = reader.result as string;
+          setEditingProperty(prev => {
+            if (!prev) return null;
+            const newGallery = [...(prev.gallery || []), base64String];
+            return {
+              ...prev,
+              imageUrl: prev.imageUrl || base64String,
+              gallery: newGallery,
+            };
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    if (editingProperty) {
+      const newGallery = [...(editingProperty.gallery || [])];
+      const removedImage = newGallery.splice(index, 1)[0];
+      
+      setEditingProperty(prev => {
+        if (!prev) return null;
+        // If we removed the main image, set a new one
+        let newImageUrl = prev.imageUrl;
+        if (prev.imageUrl === removedImage) {
+          newImageUrl = newGallery[0] || '';
+        }
+        return {
+          ...prev,
+          imageUrl: newImageUrl,
+          gallery: newGallery,
+        };
+      });
+    }
+  };
+
+  const handleSetMainImage = (image: string) => {
+    if (editingProperty) {
+      setEditingProperty(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          imageUrl: image,
+        };
+      });
+    }
+  };
   
   return (
-    <div className="flex min-h-screen bg-admin-body font-sans text-gray-800">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-          <header className="bg-white shadow-sm p-4 border-b border-gray-200">
-               <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                      <LeafIcon className="text-gray-500" />
-                      <div>
-                        <h1 className="text-lg font-bold text-gray-800">Discovery Homes</h1>
-                        <p className="text-xs text-gray-500">Curated Comforts for Your Journey</p>
-                      </div>
-                  </div>
-              </div>
-          </header>
-
-          <main className="flex-1 p-8 overflow-y-auto">
+    <div className="p-8">
             {/* Properties List */}
             <div className="mb-8">
               <div className="flex justify-between items-center mb-4">
@@ -214,8 +226,42 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
                     <div className="lg:col-span-1 space-y-6">
                       <div>
                         <h3 className="font-bold mb-2">Photo Gallery</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                            {editingProperty.gallery?.map((img, i) => <img key={i} src={img} className="rounded-md object-cover aspect-square" alt={`gallery ${i}`}/>)}
+                        <div className="grid grid-cols-2 gap-2 mb-4">
+                            {editingProperty.gallery?.map((img, i) => (
+                              <div key={i} className="relative group">
+                                <img 
+                                  src={img} 
+                                  className={`rounded-md object-cover aspect-square cursor-pointer ${editingProperty.imageUrl === img ? 'ring-2 ring-admin-green' : ''}`} 
+                                  alt={`gallery ${i}`}
+                                  onClick={() => handleSetMainImage(img)}
+                                />
+                                <button
+                                  onClick={() => handleRemoveImage(i)}
+                                  className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <CloseIcon />
+                                </button>
+                                {editingProperty.imageUrl === img && (
+                                  <div className="absolute bottom-1 left-1 bg-admin-green text-white text-xs px-2 py-1 rounded">Main</div>
+                                )}
+                              </div>
+                            ))}
+                        </div>
+                        <div className="space-y-2">
+                          <input
+                            type="file"
+                            ref={galleryInputRef}
+                            onChange={handleGalleryUpload}
+                            className="hidden"
+                            accept="image/png, image/jpeg, image/webp"
+                            multiple
+                          />
+                          <button 
+                            onClick={() => galleryInputRef.current?.click()} 
+                            className="w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                          >
+                            Upload Gallery Photos
+                          </button>
                         </div>
                       </div>
                        <div>
@@ -245,14 +291,42 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
                         <input type="number" name="price" value={editingProperty.price} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-admin-green focus:border-admin-green"/>
                       </div>
                       <div>
-                         <input
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                        <input type="text" name="location" value={editingProperty.location || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-admin-green focus:border-admin-green"/>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                          <select 
+                            name="status" 
+                            value={('status' in editingProperty) ? editingProperty.status : 'Active'} 
+                            onChange={(e) => {
+                              if ('id' in editingProperty) {
+                                setEditingProperty({ 
+                                  ...editingProperty, 
+                                  status: e.target.value as Property['status'] 
+                                });
+                              }
+                            }}
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-admin-green focus:border-admin-green"
+                            disabled={!('id' in editingProperty)}
+                          >
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="Responded">Responded</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Main Photo</label>
+                          <input
                             type="file"
                             ref={fileInputRef}
                             onChange={handleImageUpload}
                             className="hidden"
                             accept="image/png, image/jpeg, image/webp"
-                         />
-                         <button onClick={() => fileInputRef.current?.click()} className="w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">Upload Photos</button>
+                          />
+                          <button onClick={() => fileInputRef.current?.click()} className="w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">Upload Main Photo</button>
+                        </div>
                       </div>
                       <div className="flex justify-end space-x-3 pt-4">
                         <button onClick={handleCancel} className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors">Cancel</button>
@@ -263,12 +337,6 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
                 </div>
               </div>
             )}
-            <button className="w-full text-center mt-8 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100">+ Load More Homes</button>
-          </main>
-          <footer className="text-center p-4 text-sm text-gray-500 border-t border-gray-200">
-            © 2024 Discovery Homes | Contact Us: info@discoveryhomes.com
-          </footer>
-      </div>
     </div>
   );
 };

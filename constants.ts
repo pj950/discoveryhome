@@ -1,4 +1,4 @@
-import { type Property } from './types';
+import { type Property, type Booking } from './types';
 
 export const MOCK_PROPERTIES: Property[] = [
   { 
@@ -99,3 +99,162 @@ export const MOCK_PROPERTIES: Property[] = [
 ];
 
 export const ALL_AMENITIES = ['AC', 'Wi-Fi', 'Kitchen', 'Free Parking', 'Pool', 'Pet Friendly', 'Gym', 'Elevator', 'Hot Tub', 'Workspace'];
+
+export const MOCK_BOOKINGS: Booking[] = [
+  {
+    id: 1,
+    propertyId: 1,
+    propertyName: 'Forest View Suite',
+    guestName: 'John Smith',
+    guestEmail: 'john.smith@email.com',
+    checkIn: '2025-09-20',
+    checkOut: '2025-09-25',
+    guests: 2,
+    totalAmount: 4250,
+    status: 'Confirmed',
+    createdAt: '2025-09-10'
+  },
+  {
+    id: 2,
+    propertyId: 3,
+    propertyName: 'Urban Loft Retreat',
+    guestName: 'Emily Johnson',
+    guestEmail: 'emily.j@email.com',
+    checkIn: '2025-09-18',
+    checkOut: '2025-09-22',
+    guests: 3,
+    totalAmount: 3920,
+    status: 'Pending',
+    createdAt: '2025-09-15'
+  },
+  {
+    id: 3,
+    propertyId: 2,
+    propertyName: 'Boho Green Oasis',
+    guestName: 'Michael Chen',
+    guestEmail: 'mchen@email.com',
+    checkIn: '2025-10-01',
+    checkOut: '2025-10-05',
+    guests: 2,
+    totalAmount: 3680,
+    status: 'Confirmed',
+    createdAt: '2025-09-12'
+  },
+  {
+    id: 4,
+    propertyId: 5,
+    propertyName: 'Ocean Breeze Studio',
+    guestName: 'Sarah Williams',
+    guestEmail: 'sarah.w@email.com',
+    checkIn: '2025-09-25',
+    checkOut: '2025-09-28',
+    guests: 2,
+    totalAmount: 3660,
+    status: 'Completed',
+    createdAt: '2025-08-20'
+  },
+  {
+    id: 5,
+    propertyId: 4,
+    propertyName: 'Mountain Cabin Charm',
+    guestName: 'David Brown',
+    guestEmail: 'dbrown@email.com',
+    checkIn: '2025-10-10',
+    checkOut: '2025-10-15',
+    guests: 4,
+    totalAmount: 3100,
+    status: 'Pending',
+    createdAt: '2025-09-16'
+  },
+  {
+    id: 6,
+    propertyId: 7,
+    propertyName: 'Seaside Villa',
+    guestName: 'Lisa Martinez',
+    guestEmail: 'lisa.m@email.com',
+    checkIn: '2025-09-22',
+    checkOut: '2025-09-26',
+    guests: 2,
+    totalAmount: 4400,
+    status: 'Cancelled',
+    createdAt: '2025-09-05'
+  },
+  {
+    id: 7,
+    propertyId: 1,
+    propertyName: 'Forest View Suite',
+    guestName: 'Robert Taylor',
+    guestEmail: 'rtaylor@email.com',
+    checkIn: '2025-08-15',
+    checkOut: '2025-08-20',
+    guests: 2,
+    totalAmount: 4250,
+    status: 'Completed',
+    createdAt: '2025-08-01'
+  },
+  {
+    id: 8,
+    propertyId: 6,
+    propertyName: 'Sunny Garden Apt.',
+    guestName: 'Jennifer Lee',
+    guestEmail: 'jlee@email.com',
+    checkIn: '2025-09-30',
+    checkOut: '2025-10-03',
+    guests: 1,
+    totalAmount: 2100,
+    status: 'Confirmed',
+    createdAt: '2025-09-14'
+  },
+  {
+    id: 9,
+    propertyId: 3,
+    propertyName: 'Urban Loft Retreat',
+    guestName: 'Thomas Anderson',
+    guestEmail: 'tanderson@email.com',
+    checkIn: '2025-08-20',
+    checkOut: '2025-08-25',
+    guests: 2,
+    totalAmount: 4900,
+    status: 'Completed',
+    createdAt: '2025-08-10'
+  },
+  {
+    id: 10,
+    propertyId: 2,
+    propertyName: 'Boho Green Oasis',
+    guestName: 'Maria Garcia',
+    guestEmail: 'mgarcia@email.com',
+    checkIn: '2025-10-15',
+    checkOut: '2025-10-18',
+    guests: 3,
+    totalAmount: 2760,
+    status: 'Pending',
+    createdAt: '2025-09-17'
+  },
+  {
+    id: 11,
+    propertyId: 5,
+    propertyName: 'Ocean Breeze Studio',
+    guestName: 'Kevin Wilson',
+    guestEmail: 'kwilson@email.com',
+    checkIn: '2025-07-10',
+    checkOut: '2025-07-15',
+    guests: 2,
+    totalAmount: 6100,
+    status: 'Completed',
+    createdAt: '2025-07-01'
+  },
+  {
+    id: 12,
+    propertyId: 4,
+    propertyName: 'Mountain Cabin Charm',
+    guestName: 'Amanda Davis',
+    guestEmail: 'adavis@email.com',
+    checkIn: '2025-08-05',
+    checkOut: '2025-08-10',
+    guests: 3,
+    totalAmount: 3100,
+    status: 'Completed',
+    createdAt: '2025-07-25'
+  }
+];
