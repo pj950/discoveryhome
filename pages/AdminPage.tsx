@@ -2,6 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { type Property } from '../types';
 import { ALL_AMENITIES } from '../constants';
+import DashboardPage from './DashboardPage';
+import ReportsPage from './ReportsPage';
+import MessagesPage from './MessagesPage';
+import SettingsPage from './SettingsPage';
 
 // --- Helper & Icon Components ---
 
@@ -21,7 +25,12 @@ const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-
 
 // --- Main Admin Page Components ---
 
-const Sidebar = () => (
+interface SidebarProps {
+  currentPage: string;
+  onPageChange: (page: string) => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => (
   <aside className="w-64 bg-admin-dark text-gray-200 flex flex-col">
     <div className="p-6 flex items-center space-x-3 border-b border-gray-700">
       <LeafIcon className="text-white" />
@@ -31,11 +40,46 @@ const Sidebar = () => (
       </div>
     </div>
     <nav className="flex-1 px-4 py-6 space-y-2">
-      <a href="#" className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-md"><DashboardIcon /> Dashboard</a>
-      <a href="#" className="flex items-center px-4 py-2 bg-admin-green-light text-admin-green rounded-md"><PropertyIcon /> Properties</a>
-      <a href="#" className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-md"><MessageIcon /> Messages</a>
-      <a href="#" className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-md"><ReportIcon /> Reports</a>
-      <a href="#" className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-md"><SettingsIcon /> Settings</a>
+      <button 
+        onClick={() => onPageChange('dashboard')}
+        className={`w-full flex items-center px-4 py-2 rounded-md transition-colors ${
+          currentPage === 'dashboard' ? 'bg-admin-green-light text-admin-green' : 'text-gray-300 hover:bg-gray-700'
+        }`}
+      >
+        <DashboardIcon /> Dashboard
+      </button>
+      <button 
+        onClick={() => onPageChange('properties')}
+        className={`w-full flex items-center px-4 py-2 rounded-md transition-colors ${
+          currentPage === 'properties' ? 'bg-admin-green-light text-admin-green' : 'text-gray-300 hover:bg-gray-700'
+        }`}
+      >
+        <PropertyIcon /> Properties
+      </button>
+      <button 
+        onClick={() => onPageChange('messages')}
+        className={`w-full flex items-center px-4 py-2 rounded-md transition-colors ${
+          currentPage === 'messages' ? 'bg-admin-green-light text-admin-green' : 'text-gray-300 hover:bg-gray-700'
+        }`}
+      >
+        <MessageIcon /> Messages
+      </button>
+      <button 
+        onClick={() => onPageChange('reports')}
+        className={`w-full flex items-center px-4 py-2 rounded-md transition-colors ${
+          currentPage === 'reports' ? 'bg-admin-green-light text-admin-green' : 'text-gray-300 hover:bg-gray-700'
+        }`}
+      >
+        <ReportIcon /> Reports
+      </button>
+      <button 
+        onClick={() => onPageChange('settings')}
+        className={`w-full flex items-center px-4 py-2 rounded-md transition-colors ${
+          currentPage === 'settings' ? 'bg-admin-green-light text-admin-green' : 'text-gray-300 hover:bg-gray-700'
+        }`}
+      >
+        <SettingsIcon /> Settings
+      </button>
     </nav>
   </aside>
 );
@@ -61,6 +105,7 @@ interface AdminPageProps {
 }
 
 const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updateProperty, deleteProperty }) => {
+  const [currentPage, setCurrentPage] = useState<string>('dashboard');
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [editingProperty, setEditingProperty] = useState<Property | Omit<Property, 'id' | 'date' | 'status'> | null>(null);
   const [isAdding, setIsAdding] = useState(false);
@@ -119,155 +164,244 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && editingProperty) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setEditingProperty(prev => {
-          if (!prev) return null;
-          const newGallery = [...(prev.gallery || []), base64String];
-          return {
-            ...prev,
-            // If this is the first image, also set it as the main imageUrl
-            imageUrl: prev.imageUrl || base64String,
-            gallery: newGallery,
-          };
-        });
-      };
-      reader.readAsDataURL(file);
+    const files = e.target.files;
+    if (files && editingProperty) {
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64String = reader.result as string;
+          setEditingProperty(prev => {
+            if (!prev) return null;
+            const newGallery = [...(prev.gallery || []), base64String];
+            return {
+              ...prev,
+              // If this is the first image, also set it as the main imageUrl
+              imageUrl: prev.imageUrl || base64String,
+              gallery: newGallery,
+            };
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    if (editingProperty) {
+      setEditingProperty(prev => {
+        if (!prev) return null;
+        const newGallery = prev.gallery?.filter((_, index) => index !== indexToRemove) || [];
+        return {
+          ...prev,
+          gallery: newGallery,
+          // If we removed the main image, set the first remaining image as main
+          imageUrl: prev.imageUrl === prev.gallery?.[indexToRemove] ? newGallery[0] || '' : prev.imageUrl
+        };
+      });
+    }
+  };
+
+  const handleSetMainImage = (imageUrl: string) => {
+    if (editingProperty) {
+      setEditingProperty(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          imageUrl: imageUrl
+        };
+      });
     }
   };
   
-  return (
-    <div className="flex min-h-screen bg-admin-body font-sans text-gray-800">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-          <header className="bg-white shadow-sm p-4 border-b border-gray-200">
-               <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                      <LeafIcon className="text-gray-500" />
-                      <div>
-                        <h1 className="text-lg font-bold text-gray-800">Discovery Homes</h1>
-                        <p className="text-xs text-gray-500">Curated Comforts for Your Journey</p>
-                      </div>
-                  </div>
-              </div>
-          </header>
+  // 渲染页面内容
+  const renderPageContent = () => {
+    switch (currentPage) {
+      case 'dashboard':
+        return <DashboardPage properties={properties} />;
+      case 'messages':
+        return <MessagesPage properties={properties} />;
+      case 'reports':
+        return <ReportsPage properties={properties} />;
+      case 'settings':
+        return <SettingsPage />;
+      case 'properties':
+      default:
+        return renderPropertiesPage();
+    }
+  };
 
-          <main className="flex-1 p-8 overflow-y-auto">
-            {/* Properties List */}
-            <div className="mb-8">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-3xl font-bold">Properties</h2>
-                <button onClick={handleAddNew} className="px-4 py-2 bg-admin-green text-white rounded-lg font-semibold hover:bg-green-600 transition-colors">+ Add New Property</button>
-              </div>
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Thumbnail</th>
-                      <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</th>
-                      <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Property</th>
-                      <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                      <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"></th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {properties.map(prop => (
-                      <tr key={prop.id} className={`hover:bg-gray-50 ${selectedProperty?.id === prop.id ? 'bg-green-50' : ''}`} onClick={() => handleSelectProperty(prop)}>
-                        <td className="p-3">
-                          <div className="flex -space-x-4">
-                            {prop.gallery.slice(0, 3).map((img, i) => <img key={i} className="w-10 h-10 rounded-full border-2 border-white object-cover" src={img} alt={`${prop.name} gallery image ${i+1}`} />)}
-                          </div>
-                        </td>
-                        <td className="p-3 whitespace-nowrap">
-                            <div className="font-bold">{prop.name}</div>
-                            <div className="text-sm text-gray-500">¥{prop.price} / night</div>
-                        </td>
-                        <td className="p-3 text-sm text-gray-600">{prop.location}</td>
-                        <td className="p-3 text-sm text-gray-600">{prop.date}</td>
-                        <td className="p-3">
-                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${prop.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>{prop.status}</span>
-                        </td>
-                        <td className="p-3">
-                            <div className="flex space-x-2">
-                                <button onClick={(e) => { e.stopPropagation(); deleteProperty(prop.id); if(selectedProperty?.id === prop.id) handleCancel();}} className="text-gray-400 hover:text-red-600"><DeleteIcon /></button>
-                                <button onClick={(e) => { e.stopPropagation(); handleSelectProperty(prop);}} className="text-gray-400 hover:text-blue-600"><EditIcon /></button>
+  const renderPropertiesPage = () => (
+    <div className="p-8 space-y-8">
+      {/* Properties List */}
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-3xl font-bold">Properties</h2>
+          <button onClick={handleAddNew} className="px-4 py-2 bg-admin-green text-white rounded-lg font-semibold hover:bg-green-600 transition-colors">+ Add New Property</button>
+        </div>
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Thumbnail</th>
+                <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</th>
+                <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Property</th>
+                <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {properties.map(prop => (
+                <tr key={prop.id} className={`hover:bg-gray-50 ${selectedProperty?.id === prop.id ? 'bg-green-50' : ''}`} onClick={() => handleSelectProperty(prop)}>
+                  <td className="p-3">
+                    <div className="flex -space-x-4">
+                      {prop.gallery.slice(0, 3).map((img, i) => <img key={i} className="w-10 h-10 rounded-full border-2 border-white object-cover" src={img} alt={`${prop.name} gallery image ${i+1}`} />)}
+                    </div>
+                  </td>
+                  <td className="p-3 whitespace-nowrap">
+                      <div className="font-bold">{prop.name}</div>
+                      <div className="text-sm text-gray-500">¥{prop.price} / night</div>
+                  </td>
+                  <td className="p-3 text-sm text-gray-600">{prop.location}</td>
+                  <td className="p-3 text-sm text-gray-600">{prop.date}</td>
+                  <td className="p-3">
+                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${prop.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>{prop.status}</span>
+                  </td>
+                  <td className="p-3">
+                      <div className="flex space-x-2">
+                          <button onClick={(e) => { e.stopPropagation(); deleteProperty(prop.id); if(selectedProperty?.id === prop.id) handleCancel();}} className="text-gray-400 hover:text-red-600"><DeleteIcon /></button>
+                          <button onClick={(e) => { e.stopPropagation(); handleSelectProperty(prop);}} className="text-gray-400 hover:text-blue-600"><EditIcon /></button>
+                      </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Edit Property Form */}
+      {(editingProperty) && (
+        <div>
+          <h2 className="text-3xl font-bold mb-4">{isAdding ? 'Add New Property' : 'Edit Property List'}</h2>
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Left side: Gallery and amenities */}
+              <div className="lg:col-span-1 space-y-6">
+                <div>
+                  <h3 className="font-bold mb-2">Photo Gallery</h3>
+                  <div className="grid grid-cols-2 gap-2 mb-4">
+                      {editingProperty.gallery?.map((img, i) => (
+                        <div key={i} className="relative group">
+                          <img 
+                            src={img} 
+                            className={`rounded-md object-cover aspect-square cursor-pointer transition-all ${
+                              editingProperty.imageUrl === img ? 'ring-2 ring-admin-green ring-offset-2' : ''
+                            }`} 
+                            alt={`gallery ${i}`}
+                            onClick={() => handleSetMainImage(img)}
+                          />
+                          {editingProperty.imageUrl === img && (
+                            <div className="absolute top-1 left-1 bg-admin-green text-white text-xs px-1 rounded">
+                              主图
                             </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Edit Property Form */}
-            {(editingProperty) && (
-              <div>
-                <h2 className="text-3xl font-bold mb-4">{isAdding ? 'Add New Property' : 'Edit Property List'}</h2>
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left side: Gallery and amenities */}
-                    <div className="lg:col-span-1 space-y-6">
-                      <div>
-                        <h3 className="font-bold mb-2">Photo Gallery</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                            {editingProperty.gallery?.map((img, i) => <img key={i} src={img} className="rounded-md object-cover aspect-square" alt={`gallery ${i}`}/>)}
+                          )}
+                          <button
+                            onClick={() => handleRemoveImage(i)}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            ×
+                          </button>
                         </div>
-                      </div>
-                       <div>
-                         <h3 className="font-bold mb-2">Amenities</h3>
-                         <div className="grid grid-cols-2 gap-2">
-                           {ALL_AMENITIES.map(amenity => (
-                             <label key={amenity} className="flex items-center space-x-2 text-sm">
-                               <input type="checkbox" className="rounded text-admin-green focus:ring-admin-green" checked={editingProperty.amenities?.includes(amenity)} onChange={() => handleAmenityChange(amenity)} />
-                               <span>{amenity}</span>
-                             </label>
-                           ))}
-                         </div>
-                       </div>
-                    </div>
-                    {/* Right side: Form fields */}
-                    <div className="lg:col-span-2 space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">Property Name</label>
-                        <input type="text" name="name" value={editingProperty.name} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-admin-green focus:border-admin-green"/>
-                      </div>
-                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Address</label>
-                        <input type="text" name="address" value={editingProperty.address} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-admin-green focus:border-admin-green"/>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">Price per Night</label>
-                        <input type="number" name="price" value={editingProperty.price} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-admin-green focus:border-admin-green"/>
-                      </div>
-                      <div>
-                         <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleImageUpload}
-                            className="hidden"
-                            accept="image/png, image/jpeg, image/webp"
-                         />
-                         <button onClick={() => fileInputRef.current?.click()} className="w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">Upload Photos</button>
-                      </div>
-                      <div className="flex justify-end space-x-3 pt-4">
-                        <button onClick={handleCancel} className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors">Cancel</button>
-                        <button onClick={handleSave} className="px-6 py-2 bg-admin-green text-white rounded-lg font-semibold hover:bg-green-600 transition-colors">Save Changes</button>
-                      </div>
-                    </div>
+                      ))}
+                  </div>
+                  <div className="text-sm text-gray-600 mb-2">
+                    点击图片设为主图，点击 × 删除图片
                   </div>
                 </div>
+                 <div>
+                   <h3 className="font-bold mb-2">Amenities</h3>
+                   <div className="grid grid-cols-2 gap-2">
+                     {ALL_AMENITIES.map(amenity => (
+                       <label key={amenity} className="flex items-center space-x-2 text-sm">
+                         <input type="checkbox" className="rounded text-admin-green focus:ring-admin-green" checked={editingProperty.amenities?.includes(amenity)} onChange={() => handleAmenityChange(amenity)} />
+                         <span>{amenity}</span>
+                       </label>
+                     ))}
+                   </div>
+                 </div>
               </div>
-            )}
-            <button className="w-full text-center mt-8 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100">+ Load More Homes</button>
-          </main>
-          <footer className="text-center p-4 text-sm text-gray-500 border-t border-gray-200">
-            © 2024 Discovery Homes | Contact Us: info@discoveryhomes.com
-          </footer>
+              {/* Right side: Form fields */}
+              <div className="lg:col-span-2 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Property Name</label>
+                  <input type="text" name="name" value={editingProperty.name} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-admin-green focus:border-admin-green"/>
+                </div>
+                 <div>
+                  <label className="block text-sm font-medium text-gray-700">Address</label>
+                  <input type="text" name="address" value={editingProperty.address} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-admin-green focus:border-admin-green"/>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Price per Night</label>
+                  <input type="number" name="price" value={editingProperty.price} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-admin-green focus:border-admin-green"/>
+                </div>
+                <div>
+                   <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      accept="image/png, image/jpeg, image/webp"
+                      multiple
+                   />
+                   <button onClick={() => fileInputRef.current?.click()} className="w-full py-2 px-4 border-2 border-dashed border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-admin-green transition-colors">
+                     <div className="flex items-center justify-center">
+                       <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                       </svg>
+                       批量上传照片
+                     </div>
+                     <div className="text-xs text-gray-500 mt-1">
+                       支持 PNG、JPG、WebP 格式，可同时选择多张
+                     </div>
+                   </button>
+                </div>
+                <div className="flex justify-end space-x-3 pt-4">
+                  <button onClick={handleCancel} className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors">Cancel</button>
+                  <button onClick={handleSave} className="px-6 py-2 bg-admin-green text-white rounded-lg font-semibold hover:bg-green-600 transition-colors">Save Changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      <button className="w-full text-center mt-8 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100">+ Load More Homes</button>
+    </div>
+  );
+
+  return (
+    <div className="flex min-h-screen bg-admin-body font-sans text-gray-800">
+      <Sidebar currentPage={currentPage} onPageChange={setCurrentPage} />
+      <div className="flex-1 flex flex-col">
+        <header className="bg-white shadow-sm p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <LeafIcon className="text-gray-500" />
+              <div>
+                <h1 className="text-lg font-bold text-gray-800">Discovery Homes</h1>
+                <p className="text-xs text-gray-500">Curated Comforts for Your Journey</p>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main className="flex-1 overflow-y-auto">
+          {renderPageContent()}
+        </main>
+        
+        <footer className="text-center p-4 text-sm text-gray-500 border-t border-gray-200">
+          © 2024 Discovery Homes | Contact Us: info@discoveryhomes.com
+        </footer>
       </div>
     </div>
   );

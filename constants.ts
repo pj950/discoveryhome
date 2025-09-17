@@ -1,4 +1,4 @@
-import { type Property } from './types';
+import { type Property, type Booking } from './types';
 
 export const MOCK_PROPERTIES: Property[] = [
   { 
@@ -99,3 +99,87 @@ export const MOCK_PROPERTIES: Property[] = [
 ];
 
 export const ALL_AMENITIES = ['AC', 'Wi-Fi', 'Kitchen', 'Free Parking', 'Pool', 'Pet Friendly', 'Gym', 'Elevator', 'Hot Tub', 'Workspace'];
+
+// 模拟预订数据
+export const MOCK_BOOKINGS: Booking[] = [
+  {
+    id: 1,
+    propertyId: 1,
+    guestName: '张三',
+    checkIn: '2024-08-15',
+    checkOut: '2024-08-18',
+    totalAmount: 2550,
+    status: 'confirmed',
+    bookingDate: '2024-07-20'
+  },
+  {
+    id: 2,
+    propertyId: 1,
+    guestName: '李四',
+    checkIn: '2024-09-10',
+    checkOut: '2024-09-13',
+    totalAmount: 2550,
+    status: 'confirmed',
+    bookingDate: '2024-08-15'
+  },
+  {
+    id: 3,
+    propertyId: 2,
+    guestName: '王五',
+    checkIn: '2024-08-20',
+    checkOut: '2024-08-25',
+    totalAmount: 4600,
+    status: 'confirmed',
+    bookingDate: '2024-07-25'
+  },
+  {
+    id: 4,
+    propertyId: 3,
+    guestName: '赵六',
+    checkIn: '2024-09-05',
+    checkOut: '2024-09-08',
+    totalAmount: 2940,
+    status: 'confirmed',
+    bookingDate: '2024-08-10'
+  },
+  {
+    id: 5,
+    propertyId: 4,
+    guestName: '陈七',
+    checkIn: '2024-08-28',
+    checkOut: '2024-09-02',
+    totalAmount: 3100,
+    status: 'confirmed',
+    bookingDate: '2024-08-05'
+  },
+  {
+    id: 6,
+    propertyId: 5,
+    guestName: '刘八',
+    checkIn: '2024-09-15',
+    checkOut: '2024-09-18',
+    totalAmount: 3660,
+    status: 'pending',
+    bookingDate: '2024-09-01'
+  },
+  {
+    id: 7,
+    propertyId: 6,
+    guestName: '孙九',
+    checkIn: '2024-08-12',
+    checkOut: '2024-08-16',
+    totalAmount: 2800,
+    status: 'confirmed',
+    bookingDate: '2024-07-18'
+  },
+  {
+    id: 8,
+    propertyId: 7,
+    guestName: '周十',
+    checkIn: '2024-09-20',
+    checkOut: '2024-09-24',
+    totalAmount: 4400,
+    status: 'confirmed',
+    bookingDate: '2024-08-25'
+  }
+];

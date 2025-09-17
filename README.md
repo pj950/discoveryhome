@@ -1,20 +1,118 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Discovery Homes - 民宿预订平台
 
-# Run and deploy your AI Studio app
+一个现代化的民宿预订平台，提供完整的房源管理和预订统计功能。
 
-This contains everything you need to run your app locally.
+## 🌟 主要功能
 
-View your app in AI Studio: https://ai.studio/apps/drive/1LT6MDPQ5zKq8JfkL5t9O-A7IO7aOcwYG
+### 前端用户界面
+- **房源展示**: 美观的瀑布流布局展示所有房源
+- **房源详情**: 点击房源卡片查看详细信息，包括图片画廊、设施、价格等
+- **预订功能**: 集成预订表单，支持日期选择和客人数量设置
+- **响应式设计**: 完美适配桌面端和移动端
 
-## Run Locally
+### 后台管理系统
+- **数据统计仪表盘**: 
+  - 总房源数、总预订数、总收入、平均订单价值等关键指标
+  - 月度预订趋势图表
+  - 房型预订排行和收入分布
+  - 详细统计表格
 
-**Prerequisites:**  Node.js
+- **房源管理**:
+  - 添加、编辑、删除房源
+  - 批量图片上传和管理
+  - 主图设置和图片删除功能
+  - 房源设施配置
 
+- **数据报告**:
+  - 按时间范围筛选数据（7天、30天、90天、1年）
+  - 按房型筛选统计
+  - 预订状态分布分析
+  - 热门客户统计
+  - 预订明细表格
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- **消息管理**:
+  - 客户咨询、预订、投诉、好评等消息分类
+  - 消息状态管理（未读、已读、已回复）
+  - 快速回复模板
+  - 消息详情查看和回复功能
+
+- **系统设置**:
+  - 平台基本信息配置
+  - 预订规则设置
+  - 通知偏好配置
+  - 支付设置（开发中）
+
+## 🛠 技术栈
+
+- **前端框架**: React 19 + TypeScript
+- **路由管理**: React Router DOM
+- **UI样式**: Tailwind CSS
+- **图表组件**: Recharts
+- **构建工具**: Vite
+- **字体**: Manrope (Google Fonts)
+
+## 📊 数据功能
+
+- **预订统计**: 按月统计预订数量和收入
+- **房型分析**: 各房型的预订频次和收入贡献
+- **客户分析**: 热门客户和预订行为分析
+- **趋势分析**: 预订和收入趋势可视化
+
+## 🎨 设计特色
+
+- **现代化UI**: 清新简洁的设计风格
+- **交互友好**: 流畅的动画效果和用户体验
+- **数据可视化**: 丰富的图表和统计展示
+- **响应式布局**: 适配各种设备尺寸
+
+## 🚀 快速开始
+
+1. 安装依赖:
+```bash
+npm install
+```
+
+2. 启动开发服务器:
+```bash
+npm run dev
+```
+
+3. 访问应用:
+- 前端首页: `http://localhost:5173/`
+- 后台管理: `http://localhost:5173/#/admin`
+
+## 📝 使用说明
+
+### 前端功能
+- 浏览房源列表
+- 点击房源卡片查看详情
+- 在详情页面进行预订
+
+### 后台功能
+1. **Dashboard**: 查看整体数据统计
+2. **Properties**: 管理房源信息和图片
+3. **Messages**: 处理客户消息
+4. **Reports**: 查看详细数据报告
+5. **Settings**: 配置系统参数
+
+## 🔧 开发说明
+
+项目采用模块化架构，主要目录结构：
+- `pages/`: 页面组件
+- `components/`: 可复用组件
+- `types.ts`: TypeScript类型定义
+- `constants.ts`: 常量和模拟数据
+- `services/`: 服务层（预留）
+
+## 📈 后续开发计划
+
+- [ ] 支付功能集成
+- [ ] 用户认证系统
+- [ ] 实时通知功能
+- [ ] 移动端应用
+- [ ] 多语言支持
+- [ ] 数据导出功能
+
+---
+
+Built with [AI Studio](https://aistudio.google.com/)
