@@ -9,4 +9,6 @@ export interface Property {
   gallery: string[];
   address: string;
   amenities: string[];
+  roomType: string;
+  subscriptionsByMonth: Record<string, number>; // e.g., { '2024-07': 12 }
 }

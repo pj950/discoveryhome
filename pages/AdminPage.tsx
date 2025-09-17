@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { type Property } from '../types';
+import MonthlySubscriptionsChart from '../components/MonthlySubscriptionsChart';
 import { ALL_AMENITIES } from '../constants';
 
 // --- Helper & Icon Components ---
@@ -50,6 +51,8 @@ const EmptyProperty: Omit<Property, 'id'> = {
   gallery: [],
   address: '',
   amenities: [],
+  roomType: '',
+  subscriptionsByMonth: {}
 };
 
 
@@ -65,6 +68,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
   const [editingProperty, setEditingProperty] = useState<Property | Omit<Property, 'id' | 'date' | 'status'> | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'properties' | 'reports'>('properties');
 
   useEffect(() => {
     if (selectedProperty) {
@@ -139,6 +143,12 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
     }
   };
   
+  const setCoverImage = (img: string) => {
+    if (editingProperty) {
+      setEditingProperty({ ...editingProperty, imageUrl: img });
+    }
+  };
+  
   return (
     <div className="flex min-h-screen bg-admin-body font-sans text-gray-800">
       <Sidebar />
@@ -152,11 +162,57 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
                         <p className="text-xs text-gray-500">Curated Comforts for Your Journey</p>
                       </div>
                   </div>
+                  <div className="flex items-center space-x-2">
+                    <button className={`px-3 py-1.5 rounded-md text-sm ${activeTab==='dashboard' ? 'bg-admin-green text-white' : 'bg-gray-100 text-gray-700'}`} onClick={()=>setActiveTab('dashboard')}>Dashboard</button>
+                    <button className={`px-3 py-1.5 rounded-md text-sm ${activeTab==='properties' ? 'bg-admin-green text-white' : 'bg-gray-100 text-gray-700'}`} onClick={()=>setActiveTab('properties')}>Properties</button>
+                    <button className={`px-3 py-1.5 rounded-md text-sm ${activeTab==='reports' ? 'bg-admin-green text-white' : 'bg-gray-100 text-gray-700'}`} onClick={()=>setActiveTab('reports')}>Reports</button>
+                  </div>
               </div>
           </header>
 
           <main className="flex-1 p-8 overflow-y-auto">
-            {/* Properties List */}
+            {activeTab === 'dashboard' && (
+              <div className="space-y-8">
+                <h2 className="text-3xl font-bold">Dashboard</h2>
+                {/* KPIs */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {(() => {
+                    const totalSubs = properties.reduce((sum, p) => {
+                      const monthlyCounts = Object.values(p.subscriptionsByMonth || {}) as number[];
+                      const propertyTotal = monthlyCounts.reduce((a, b) => a + b, 0);
+                      return sum + propertyTotal;
+                    }, 0);
+                    const totalProps = properties.length;
+                    const avgPrice = Math.round(properties.reduce((sum, p) => sum + p.price, 0) / Math.max(1, totalProps));
+                    return (
+                      <>
+                        <div className="bg-white rounded-lg shadow p-4"><div className="text-sm text-gray-500">Total Subscriptions</div><div className="text-2xl font-bold">{totalSubs}</div></div>
+                        <div className="bg-white rounded-lg shadow p-4"><div className="text-sm text-gray-500">Total Properties</div><div className="text-2xl font-bold">{totalProps}</div></div>
+                        <div className="bg-white rounded-lg shadow p-4"><div className="text-sm text-gray-500">Avg. Price / Night</div><div className="text-2xl font-bold">¥{avgPrice}</div></div>
+                      </>
+                    );
+                  })()}
+                </div>
+                {/* Monthly subscriptions aggregate */}
+                {(() => {
+                  const monthToCount: Record<string, number> = {};
+                  properties.forEach(p => {
+                    Object.entries(p.subscriptionsByMonth || {}).forEach(([m, c]) => {
+                      const count = c as number;
+                      monthToCount[m] = (monthToCount[m] || 0) + count;
+                    });
+                  });
+                  const months = Object.keys(monthToCount).sort();
+                  const data = months.map(m => ({ month: m, count: monthToCount[m] }));
+                  return (
+                    <div className="bg-white rounded-lg shadow p-6">
+                      <MonthlySubscriptionsChart data={data} />
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+            {activeTab === 'properties' && (
             <div className="mb-8">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-3xl font-bold">Properties</h2>
@@ -167,10 +223,11 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Thumbnail</th>
-                      <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</th>
                       <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Property</th>
+                      <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</th>
                       <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
                       <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Room Type</th>
                       <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"></th>
                     </tr>
                   </thead>
@@ -191,6 +248,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
                         <td className="p-3">
                           <span className={`px-2 py-1 text-xs font-semibold rounded-full ${prop.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>{prop.status}</span>
                         </td>
+                        <td className="p-3 text-sm text-gray-600">{prop.roomType}</td>
                         <td className="p-3">
                             <div className="flex space-x-2">
                                 <button onClick={(e) => { e.stopPropagation(); deleteProperty(prop.id); if(selectedProperty?.id === prop.id) handleCancel();}} className="text-gray-400 hover:text-red-600"><DeleteIcon /></button>
@@ -203,9 +261,10 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
                 </table>
               </div>
             </div>
+            )}
 
             {/* Edit Property Form */}
-            {(editingProperty) && (
+            {(activeTab === 'properties' && editingProperty) && (
               <div>
                 <h2 className="text-3xl font-bold mb-4">{isAdding ? 'Add New Property' : 'Edit Property List'}</h2>
                 <div className="bg-white rounded-lg shadow-md p-6">
@@ -215,7 +274,14 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
                       <div>
                         <h3 className="font-bold mb-2">Photo Gallery</h3>
                         <div className="grid grid-cols-2 gap-2">
-                            {editingProperty.gallery?.map((img, i) => <img key={i} src={img} className="rounded-md object-cover aspect-square" alt={`gallery ${i}`}/>)}
+                            {editingProperty.gallery?.map((img, i) => (
+                              <button type="button" key={i} onClick={() => setCoverImage(img)} className={`relative rounded-md overflow-hidden border ${editingProperty.imageUrl === img ? 'border-admin-green ring-2 ring-admin-green' : 'border-transparent'}`}>
+                                <img src={img} className="object-cover aspect-square w-full h-full" alt={`gallery ${i}`}/>
+                                {editingProperty.imageUrl === img && (
+                                  <span className="absolute bottom-1 left-1 bg-admin-green text-white text-xs px-2 py-0.5 rounded">Cover</span>
+                                )}
+                              </button>
+                            ))}
                         </div>
                       </div>
                        <div>
@@ -241,6 +307,10 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
                         <input type="text" name="address" value={editingProperty.address} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-admin-green focus:border-admin-green"/>
                       </div>
                       <div>
+                        <label className="block text-sm font-medium text-gray-700">Room Type</label>
+                        <input type="text" name="roomType" value={(editingProperty as any).roomType || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-admin-green focus:border-admin-green"/>
+                      </div>
+                      <div>
                         <label className="block text-sm font-medium text-gray-700">Price per Night</label>
                         <input type="number" name="price" value={editingProperty.price} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-admin-green focus:border-admin-green"/>
                       </div>
@@ -263,7 +333,53 @@ const AdminPage: React.FC<AdminPageProps> = ({ properties, addProperty, updatePr
                 </div>
               </div>
             )}
-            <button className="w-full text-center mt-8 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100">+ Load More Homes</button>
+            {activeTab === 'reports' && (
+              <div className="space-y-6">
+                <h2 className="text-3xl font-bold">Reports</h2>
+                {(() => {
+                  const monthSet = new Set<string>();
+                  properties.forEach(p => Object.keys(p.subscriptionsByMonth || {}).forEach(m => monthSet.add(m)));
+                  const months = Array.from(monthSet).sort();
+                  return (
+                    <div className="bg-white rounded-lg shadow overflow-auto">
+                      <table className="min-w-full">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Property</th>
+                            <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Room Type</th>
+                            {months.map(m => (
+                              <th key={m} className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{m}</th>
+                            ))}
+                            <th className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {properties.map(p => {
+                        const total = (Object.values(p.subscriptionsByMonth || {}) as number[]).reduce((a,b)=>a+b,0);
+                            return (
+                              <tr key={p.id}>
+                                <td className="p-3 whitespace-nowrap">
+                                  <div className="font-semibold">{p.name}</div>
+                                  <div className="text-sm text-gray-500">{p.location}</div>
+                                </td>
+                                <td className="p-3 text-sm text-gray-600">{p.roomType}</td>
+                                {months.map(m => (
+                                  <td key={m} className="p-3 text-sm text-gray-600">{p.subscriptionsByMonth?.[m] ?? 0}</td>
+                                ))}
+                                <td className="p-3 text-sm text-gray-600 font-medium">{total}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+            {activeTab === 'properties' && (
+              <button className="w-full text-center mt-8 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100">+ Load More Homes</button>
+            )}
           </main>
           <footer className="text-center p-4 text-sm text-gray-500 border-t border-gray-200">
             © 2024 Discovery Homes | Contact Us: info@discoveryhomes.com
